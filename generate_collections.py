@@ -898,6 +898,10 @@ collections = {
     },
 }
 
+for details in collections.values():
+    if "page_title" in details:
+        details["page_title"] = details["page_title"].replace("Celestial Candle Studio", "Sen's Candle Studio")
+
 for slug, data in collections.items():
     # add derived fields where missing
     if "meta_secondary" not in data:
@@ -916,7 +920,7 @@ template_text = Template("""<!DOCTYPE html>
     <title>$page_title</title>
     <link rel=\"preconnect\" href=\"https://fonts.googleapis.com\">
     <link rel=\"preconnect\" href=\"https://fonts.gstatic.com\" crossorigin>
-    <link href=\"https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap\" rel=\"stylesheet\">
+    <link href=\"https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=Cinzel+Decorative:wght@400;600&family=Great+Vibes&display=swap\" rel=\"stylesheet\">
     <style>
         :root {
             --background: $background;
@@ -974,6 +978,35 @@ template_text = Template("""<!DOCTYPE html>
             font-family: 'Playfair Display', Georgia, serif;
             font-size: 1.5rem;
             letter-spacing: 0.08em;
+        }
+        .brand-logo {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.1rem;
+            text-decoration: none;
+            letter-spacing: normal;
+            color: inherit;
+            line-height: 1;
+        }
+        .brand-logo .brand-script {
+            font-family: 'Great Vibes', 'Brush Script MT', cursive;
+            font-size: 1.7rem;
+            color: #bf2f24;
+            letter-spacing: 0.08em;
+        }
+        .brand-logo .brand-block {
+            font-family: 'Cinzel Decorative', 'Playfair Display', serif;
+            text-transform: uppercase;
+            letter-spacing: 0.35em;
+            font-size: 0.8rem;
+            color: #1f5d33;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .brand-logo .brand-block span + span {
+            margin-top: -0.25rem;
         }
         .nav-links {
             display: flex;
@@ -1451,7 +1484,7 @@ template_text = Template("""<!DOCTYPE html>
     <div class=\"announcement\">Complimentary carbon-neutral shipping on all candle bundles.</div>
     <header>
         <nav aria-label=\"Primary navigation\">
-            <a class=\"brand\" href=\"index.html\">Celestial Candle Studio</a>
+            <a class=\"brand brand-logo\" href=\"index.html\">\n+                <span class=\"brand-script\">Sen's</span>\n+                <span class=\"brand-block\">\n+                    <span>Candle</span>\n+                    <span>Studio</span>\n+                </span>\n+            </a>
             <div class=\"nav-links\">
                 <button class=\"nav-link menu-trigger\" type=\"button\" aria-haspopup=\"dialog\" aria-expanded=\"false\" data-menu-open=\"scentMenu\">Shop by Scent</button>
                 <a href=\"index.html#collection\">Candles</a>
@@ -1545,7 +1578,7 @@ $palette_chips
     <footer>
         <div class=\"footer-content\">
             <div class=\"footer-brand\">
-                <h3>Celestial Candle Studio</h3>
+                <h3>Sen's Candle Studio</h3>
                 <p>Hand-poured in Brooklyn using clean ingredients and planet-friendly packaging. Crafted to transport you—wherever you are.</p>
             </div>
             <div class=\"footer-links\">
@@ -1577,7 +1610,7 @@ $palette_chips
             </div>
         </div>
         <div class=\"footer-bottom\">
-            <span>&copy; <span id=\"year\"></span> Celestial Candle Studio. All rights reserved.</span>
+            <span>&copy; <span id=\"year\"></span> Sen's Candle Studio. All rights reserved.</span>
             <span>Crafted in Brooklyn, NY</span>
         </div>
     </footer>
