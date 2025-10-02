@@ -1490,8 +1490,6 @@ template_text = Template("""<!DOCTYPE html>
                 <a href=\"index.html#collection\">Candles</a>
                 <a href=\"index.html#story\">Our Story</a>
                 <a href=\"index.html#values\">Sustainability</a>
-                <a href=\"index.html#journal\">Journal</a>
-                <a class=\"nav-cta\" href=\"index.html#newsletter\">Gift Finder</a>
             </div>
         </nav>
     </header>
