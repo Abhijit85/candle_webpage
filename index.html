@@ -6,7 +6,7 @@
     <title>SenS Candle Studio – Hand Poured Luxury Candles</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&family=Cinzel+Decorative:wght@400;600&family=Great+Vibes&display=swap" rel="stylesheet">
     <style>
         :root {
             --background: #f8f5f1;
@@ -76,6 +76,81 @@
             font-family: 'Playfair Display', Georgia, serif;
             font-size: 1.5rem;
             letter-spacing: 0.08em;
+        }
+        .brand-logo {
+            font-family: 'Cinzel Decorative', 'Playfair Display', serif;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.25rem;
+            position: relative;
+            text-decoration: none;
+            color: inherit;
+            line-height: 1;
+            padding: 0.35rem 0.4rem 0.3rem;
+        }
+        .brand-logo::before {
+            content: "";
+            position: absolute;
+            width: 126px;
+            height: 72px;
+            border: 2px solid rgba(191, 47, 36, 0.6);
+            border-radius: 60% 70% 50% 50%;
+            top: -10px;
+            left: -28px;
+            transform: rotate(-14deg);
+            filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.16));
+            pointer-events: none;
+        }
+        .brand-logo::after {
+            content: "";
+            position: absolute;
+            width: 188px;
+            height: 118px;
+            border-top: 2px solid rgba(191, 47, 36, 0.48);
+            border-left: 2px solid transparent;
+            border-right: 2px solid transparent;
+            border-bottom: 2px solid transparent;
+            border-radius: 55% 60% 0 60%;
+            top: -38px;
+            right: -82px;
+            transform: rotate(12deg);
+            opacity: 0.68;
+            pointer-events: none;
+        }
+        .brand-logo .brand-script {
+            font-family: 'Great Vibes', 'Brush Script MT', cursive;
+            font-size: clamp(2.1rem, 3vw, 2.6rem);
+            color: #bf2f24;
+            letter-spacing: 0.16em;
+            text-shadow: 0 10px 16px rgba(143, 22, 12, 0.28);
+            margin-left: 0.3rem;
+        }
+        .brand-logo .brand-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: -0.15rem;
+            font-size: clamp(1.35rem, 2.1vw, 2.1rem);
+            text-transform: uppercase;
+            letter-spacing: 0.4em;
+            line-height: 0.8;
+            text-shadow: 0 10px 18px rgba(18, 16, 13, 0.22);
+        }
+        .brand-logo .brand-block span {
+            display: block;
+            background: linear-gradient(180deg, #1f5d33 0%, #143d20 100%);
+            -webkit-background-clip: text;
+            color: transparent;
+            padding: 0 0.15rem;
+        }
+        .brand-logo .brand-block span + span {
+            margin-top: -0.2rem;
+            letter-spacing: 0.5em;
+        }
+        .brand-logo:hover .brand-script,
+        .brand-logo:focus .brand-script {
+            color: #d43b2f;
         }
         .nav-links {
             display: flex;
@@ -774,6 +849,23 @@
             .announcement {
                 font-size: 0.75rem;
             }
+            .brand-logo {
+                align-items: center;
+                padding: 0.3rem 0;
+            }
+            .brand-logo::before,
+            .brand-logo::after {
+                display: none;
+            }
+            .brand-logo .brand-script {
+                margin-left: 0;
+                font-size: 2.2rem;
+                letter-spacing: 0.1em;
+            }
+            .brand-logo .brand-block {
+                align-items: center;
+                letter-spacing: 0.32em;
+            }
             .filter-bar {
                 padding: 20px;
             }
@@ -816,7 +908,13 @@
     <div class="announcement">Complimentary carbon-neutral shipping on all candle bundles.</div>
     <header>
         <nav aria-label="Primary navigation">
-            <a class="brand" href="#top">Sens Candle Studio</a>
+            <a class="brand brand-logo" href="#top" aria-label="Sen's Candle Studio home">
+                <span class="brand-script">Sen's</span>
+                <span class="brand-block" aria-hidden="true">
+                    <span>Candle</span>
+                    <span>Studio</span>
+                </span>
+            </a>
             <div class="nav-links">
                 <button class="nav-link menu-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" data-menu-open="scentMenu">Shop by Scent</button>
                 <a href="#collection">Candles</a>
