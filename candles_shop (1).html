@@ -3,507 +3,1279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Handmade Luxury Candles – Shop</title>
-    <!--
-        This single‑page store template is designed to help small makers sell
-        handmade candles without needing a complicated e‑commerce platform.  It
-        uses modern, responsive HTML/CSS and a little vanilla JavaScript to
-        display a catalogue of products, allow visitors to add items to a cart
-        and submit an order, and even lets the store owner add or remove
-        products from the catalogue.  All data (the products list and cart
-        contents) is stored in localStorage so it persists across page reloads.
-    -->
+    <title>Celestial Candle Studio – Hand Poured Luxury Candles</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3a2c2b;
-            --accent-color: #e7b58a;
-            --light-color: #fdfdfd;
-            --dark-color: #1a1a1a;
-            --border-radius: 8px;
+            --background: #f8f5f1;
+            --surface: #ffffff;
+            --text-primary: #1f1c1a;
+            --text-secondary: #5f574f;
+            --accent: #b9875b;
+            --accent-dark: #a07449;
+            --border: #e3ded7;
+            --nav-height: 72px;
+        }
+        *, *::before, *::after {
+            box-sizing: border-box;
         }
         body {
             margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--light-color);
-            color: var(--dark-color);
-            line-height: 1.6;
+            font-family: 'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            background: var(--background);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+        img {
+            max-width: 100%;
+            display: block;
+        }
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+        .announcement {
+            background: var(--text-primary);
+            color: var(--surface);
+            text-align: center;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            padding: 0.75rem 1rem;
         }
         header {
-            background: var(--primary-color);
-            color: var(--light-color);
-            padding: 2rem 1rem;
-            text-align: center;
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
         }
-        header h1 {
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: var(--nav-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        .brand {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.08em;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .nav-link,
+        .nav-links a {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+        .nav-link {
+            background: none;
+            border: none;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0;
+        }
+        .menu-trigger::after {
+            content: '\25BE';
+            font-size: 0.55rem;
+            transform-origin: center;
+            transition: transform 0.2s ease;
+        }
+        body.menu-open .menu-trigger::after {
+            transform: rotate(-180deg);
+        }
+        .nav-link:hover,
+        .nav-link:focus,
+        .nav-links a:hover,
+        .nav-links a:focus {
+            color: var(--accent-dark);
+        }
+        .nav-cta {
+            border: 1px solid var(--text-primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .nav-cta:hover,
+        .nav-cta:focus {
+            background: var(--text-primary);
+            color: var(--surface);
+        }
+        .menu-overlay[hidden],
+        .mega-menu[hidden] {
+            display: none;
+        }
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(20, 18, 16, 0.55);
+            backdrop-filter: blur(3px);
+            z-index: 30;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .menu-overlay.is-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .mega-menu {
+            position: fixed;
+            top: clamp(72px, 12vh, 120px);
+            left: 50%;
+            transform: translate(-50%, -12px);
+            max-width: min(1080px, calc(100% - 48px));
+            background: var(--surface);
+            border-radius: 28px;
+            box-shadow: 0 28px 80px rgba(18, 16, 13, 0.24);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .mega-menu.is-active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0);
+        }
+        .mega-menu__inner {
+            padding: 44px 48px 40px;
+            display: grid;
+            gap: 32px;
+        }
+        .mega-menu__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .mega-menu__header h2 {
             margin: 0;
-            font-size: 2.5rem;
-            letter-spacing: 2px;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.06em;
         }
-        header p {
-            margin: 0.5rem 0 0;
-            font-style: italic;
-            font-size: 1.1rem;
+        .mega-menu__close {
+            border: none;
+            background: rgba(0, 0, 0, 0.06);
+            color: var(--text-primary);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .mega-menu__close:hover,
+        .mega-menu__close:focus {
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+        }
+        .mega-menu__grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 32px;
+        }
+        .mega-menu__column h3 {
+            margin: 0 0 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            color: var(--text-secondary);
+        }
+        .mega-menu__column ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.45rem;
+        }
+        .mega-menu__column a {
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+        }
+        .mega-menu__column a:hover,
+        .mega-menu__column a:focus {
+            color: var(--accent-dark);
+        }
+        .mega-menu__feature {
+            display: grid;
+            gap: 18px;
+        }
+        .mega-menu__feature article {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        }
+        .mega-menu__feature img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .feature-copy {
+            padding: 18px 22px 22px;
+            background: rgba(248, 245, 241, 0.9);
+        }
+        .feature-kicker {
+            margin: 0 0 0.35rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .feature-copy h3 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        body.menu-open {
+            overflow: hidden;
+        }
+        body.menu-open main,
+        body.menu-open footer {
+            filter: blur(10px);
+            pointer-events: none;
         }
         main {
-            padding: 2rem 1rem;
+            padding: 0 24px 6rem;
+            transition: filter 0.3s ease;
+        }
+        .section {
             max-width: 1200px;
             margin: 0 auto;
         }
-        /* Product grid */
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-        .product {
-            background: var(--light-color);
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        .hero {
+            position: relative;
+            margin: 48px auto 40px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-        .product img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-        .product-content {
-            padding: 1rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-        .product h3 {
-            margin: 0 0 0.5rem;
-            font-size: 1.4rem;
-            color: var(--primary-color);
-        }
-        .product .price {
-            font-weight: bold;
-            margin: 0.5rem 0;
-            color: var(--accent-color);
-        }
-        .product ul {
-            list-style: disc;
-            padding-left: 1.2rem;
-            margin: 0.5rem 0;
-            flex-grow: 1;
-        }
-        .product ul li {
-            margin: 0.25rem 0;
-        }
-        .product button {
-            margin-top: auto;
-            padding: 0.5rem 1rem;
-            background: var(--accent-color);
-            color: var(--dark-color);
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s ease;
-        }
-        .product button:hover {
-            background: #d9a471;
-        }
-        /* Cart section */
-        #cart {
-            margin-top: 3rem;
-            border-top: 4px solid var(--primary-color);
-            padding-top: 2rem;
-        }
-        #cart h2 {
-            margin-top: 0;
-        }
-        .cart-items {
-            list-style: none;
-            padding: 0;
-            margin: 0 0 1rem;
-        }
-        .cart-items li {
-            display: flex;
-            justify-content: space-between;
+            border-radius: 24px;
+            min-height: 420px;
+            display: grid;
             align-items: center;
-            border-bottom: 1px solid #eee;
-            padding: 0.5rem 0;
+            padding: 72px 64px;
+            color: var(--surface);
         }
-        .cart-items li span {
-            flex: 1;
+        .hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1518459031867-a89b944bffe4?auto=format&fit=crop&w=1400&q=80') center/cover;
+            z-index: 0;
+            transform: scale(1.03);
         }
-        .cart-items li button {
-            background: transparent;
-            border: none;
-            color: #c0392b;
-            font-size: 1.2rem;
-            cursor: pointer;
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(20, 18, 16, 0.78) 15%, rgba(20, 18, 16, 0.5) 40%, rgba(20, 18, 16, 0.15));
+            z-index: 0;
         }
-        .cart-summary {
-            font-weight: bold;
-            margin-bottom: 1rem;
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 520px;
         }
-        /* Order form */
-        #order-form {
-            display: none; /* show when items are in cart */
-            background: #f9f9f9;
-            padding: 1rem;
-            border-radius: var(--border-radius);
+        .hero-kicker {
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.78rem;
+            margin-bottom: 1.5rem;
         }
-        #order-form label {
-            display: block;
-            margin: 0.5rem 0 0.25rem;
+        .hero h1 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: clamp(2.6rem, 5vw, 3.9rem);
+            margin: 0 0 1.5rem;
+            line-height: 1.05;
         }
-        #order-form input,
-        #order-form textarea {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: var(--border-radius);
-            font-size: 1rem;
+        .hero p {
+            font-size: 1.05rem;
+            max-width: 460px;
+            margin-bottom: 2rem;
         }
-        #order-form button[type="submit"] {
-            margin-top: 1rem;
-            background: var(--primary-color);
-            color: var(--light-color);
-            padding: 0.6rem 1.2rem;
-            border: none;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        #order-form button[type="submit"]:hover {
-            background: #533634;
-        }
-        /* Manage products section */
-        #manage-products {
-            margin-top: 3rem;
-            border-top: 4px solid var(--primary-color);
-            padding-top: 2rem;
-        }
-        #manage-products h2 {
-            margin-top: 0;
-        }
-        #manage-products form {
+        .hero-actions {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
-            margin-bottom: 1rem;
         }
-        #manage-products form input,
-        #manage-products form textarea {
-            flex: 1 1 200px;
-            padding: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: var(--border-radius);
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.85rem 1.8rem;
+            border-radius: 999px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
         }
-        #manage-products form button {
-            background: var(--primary-color);
-            color: var(--light-color);
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            cursor: pointer;
+        .btn-primary {
+            background: var(--surface);
+            color: var(--text-primary);
         }
-        #manage-products table {
+        .btn-primary:hover,
+        .btn-primary:focus {
+            transform: translateY(-2px);
+        }
+        .btn-outline {
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            color: var(--surface);
+        }
+        .btn-outline:hover,
+        .btn-outline:focus {
+            background: rgba(255, 255, 255, 0.18);
+        }
+        .filter-bar {
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px 32px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1.5rem;
+            border: 1px solid var(--border);
+        }
+        .filter-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        .filter-meta span {
+            letter-spacing: 0.18em;
+            font-size: 0.76rem;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .filter-meta strong {
+            font-size: 1.15rem;
+        }
+        .filter-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .filter-controls select {
+            border: 1px solid var(--border);
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            background: var(--background);
+            color: var(--text-primary);
+            min-width: 185px;
+        }
+        .collection-header {
+            margin: 56px 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .collection-header h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.25rem;
+            margin: 0;
+        }
+        .collection-header p {
+            color: var(--text-secondary);
+            max-width: 620px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+        }
+        .product-card {
+            background: var(--surface);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card figure {
+            position: relative;
+            overflow: hidden;
+            aspect-ratio: 3 / 4;
+        }
+        .product-card img {
             width: 100%;
-            border-collapse: collapse;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
         }
-        #manage-products th, #manage-products td {
-            border: 1px solid #ddd;
-            padding: 0.5rem;
-            text-align: left;
+        .product-card:hover img {
+            transform: scale(1.05);
         }
-        #manage-products th {
-            background: #f5f5f5;
+        .product-info {
+            padding: 22px 24px 26px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
-        #manage-products td button {
-            background: #c0392b;
-            color: var(--light-color);
+        .product-tag {
+            font-size: 0.72rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+        .product-info h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.25rem;
+            margin: 0;
+        }
+        .product-notes {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .product-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: auto;
+        }
+        .price {
+            font-weight: 600;
+            letter-spacing: 0.12em;
+        }
+        .quick-add {
             border: none;
-            padding: 0.3rem 0.6rem;
-            border-radius: var(--border-radius);
+            background: var(--text-primary);
+            color: var(--surface);
+            padding: 0.55rem 1.4rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
             cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
         }
-        @media (prefers-color-scheme: dark) {
-            body {
-                background: var(--dark-color);
-                color: var(--light-color);
+        .quick-add:hover,
+        .quick-add:focus {
+            transform: translateY(-2px);
+            background: var(--accent-dark);
+        }
+        .collection-copy {
+            margin: 52px 0 0;
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px 56px;
+            border: 1px solid var(--border);
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+        .collection-copy p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        .collection-copy h3 {
+            margin: 0 0 1rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .brand-story {
+            margin: 96px auto;
+            display: grid;
+            gap: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            align-items: center;
+        }
+        .brand-story .story-copy h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.2rem;
+            margin: 0 0 1.25rem;
+        }
+        .brand-story .story-copy p {
+            color: var(--text-secondary);
+        }
+        .brand-story .story-highlights {
+            display: grid;
+            gap: 18px;
+        }
+        .story-highlights li {
+            list-style: none;
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.6);
+        }
+        .story-visual {
+            position: relative;
+            border-radius: 26px;
+            overflow: hidden;
+            min-height: 420px;
+        }
+        .story-visual img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .story-badge {
+            position: absolute;
+            bottom: 24px;
+            left: 24px;
+            background: rgba(255, 255, 255, 0.92);
+            padding: 18px 22px;
+            border-radius: 18px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+        }
+        .story-badge span {
+            display: block;
+            font-size: 0.74rem;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--accent-dark);
+            margin-bottom: 0.4rem;
+        }
+        .story-badge strong {
+            font-size: 1.2rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .values {
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 64px 56px;
+            border: 1px solid var(--border);
+            display: grid;
+            gap: 32px;
+        }
+        .values h2 {
+            margin: 0;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+        }
+        .values-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 28px;
+        }
+        .value-card {
+            padding: 28px;
+            border-radius: 18px;
+            background: var(--background);
+            border: 1px solid var(--border);
+        }
+        .value-card h3 {
+            margin: 0 0 0.75rem;
+            font-size: 1.05rem;
+        }
+        .value-card p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        .journal {
+            margin: 96px auto;
+        }
+        .journal-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 32px;
+        }
+        .journal-header h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            margin: 0;
+            font-size: 2rem;
+        }
+        .journal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 28px;
+        }
+        .journal-card {
+            background: var(--surface);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .journal-card img {
+            aspect-ratio: 4 / 3;
+            object-fit: cover;
+        }
+        .journal-card .copy {
+            padding: 22px 24px 26px;
+            display: grid;
+            gap: 0.75rem;
+        }
+        .journal-card span {
+            font-size: 0.72rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+        .journal-card h3 {
+            margin: 0;
+            font-size: 1.15rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .journal-card p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        .newsletter {
+            background: var(--text-primary);
+            color: var(--surface);
+            border-radius: 24px;
+            padding: 64px 56px;
+            display: grid;
+            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            align-items: center;
+        }
+        .newsletter h2 {
+            margin: 0;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2.3rem;
+        }
+        .newsletter p {
+            margin: 0;
+            color: rgba(255, 255, 255, 0.76);
+        }
+        .newsletter form {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .newsletter input {
+            flex: 1 1 260px;
+            padding: 0.9rem 1.2rem;
+            border-radius: 999px;
+            border: none;
+            font-size: 0.95rem;
+        }
+        .newsletter button {
+            border: none;
+            padding: 0.9rem 1.8rem;
+            border-radius: 999px;
+            background: var(--accent);
+            color: var(--surface);
+            font-weight: 600;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .newsletter button:hover,
+        .newsletter button:focus {
+            background: var(--accent-dark);
+            transform: translateY(-2px);
+        }
+        footer {
+            background: var(--surface);
+            padding: 72px 24px 40px;
+            border-top: 1px solid var(--border);
+            transition: filter 0.3s ease;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .footer-brand h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.7rem;
+            margin: 0 0 1rem;
+        }
+        .footer-links h4 {
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.22em;
+            margin: 0 0 1rem;
+        }
+        .footer-links ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.6rem;
+        }
+        .footer-links a {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+        .footer-bottom {
+            margin-top: 48px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        @media (max-width: 900px) {
+            nav {
+                flex-direction: column;
+                justify-content: center;
+                gap: 1rem;
+                height: auto;
+                padding: 16px 24px 24px;
             }
-            header {
-                background: var(--primary-color);
+            .hero {
+                padding: 64px 32px;
             }
-            .product {
-                border-color: #444;
-                background: #272323;
+            .collection-copy {
+                padding: 36px;
             }
-            .product button {
-                color: var(--dark-color);
+            .values {
+                padding: 48px 36px;
             }
-            #order-form {
-                background: #2c2c2c;
+            .mega-menu {
+                top: clamp(64px, 10vh, 96px);
             }
-            #manage-products th {
-                background: #3a3a3a;
+            .mega-menu__inner {
+                padding: 36px;
+            }
+            .mega-menu__grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+        }
+        @media (max-width: 640px) {
+            main {
+                padding: 0 18px 4rem;
+            }
+            .announcement {
+                font-size: 0.75rem;
+            }
+            .filter-bar {
+                padding: 20px;
+            }
+            .filter-controls select {
+                min-width: 140px;
+            }
+            .hero {
+                margin-top: 32px;
+            }
+            .hero-actions {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .collection-copy {
+                padding: 28px;
+            }
+            .values {
+                padding: 36px 28px;
+            }
+            .newsletter {
+                padding: 48px 28px;
+            }
+            .mega-menu__inner {
+                padding: 32px 24px;
+            }
+            .mega-menu__header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .mega-menu__close {
+                align-self: flex-end;
+            }
+            .mega-menu__feature article {
+                box-shadow: none;
             }
         }
     </style>
 </head>
 <body>
+    <div class="announcement">Complimentary carbon-neutral shipping on all candle bundles.</div>
     <header>
-        <h1>LuxAura Candles</h1>
-        <p>Elevate your ambience with handcrafted luxury candles</p>
+        <nav aria-label="Primary navigation">
+            <a class="brand" href="#top">Celestial Candle Studio</a>
+            <div class="nav-links">
+                <button class="nav-link menu-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" data-menu-open="scentMenu">Shop by Scent</button>
+                <a href="#collection">Candles</a>
+                <a href="#story">Our Story</a>
+                <a href="#values">Sustainability</a>
+                <a href="#journal">Journal</a>
+                <a class="nav-cta" href="#newsletter">Gift Finder</a>
+            </div>
+        </nav>
     </header>
-    <main>
-        <!-- Product catalogue -->
-        <section id="catalogue">
-            <h2>Our Collection</h2>
-            <p>Indulge in our small‑batch, hand‑poured candles. Each fragrance tells a story – from calming lavender fields to vibrant citrus groves.  Our soy wax and cotton wicks ensure a clean, long‑lasting burn.</p>
-            <div class="product-grid" id="productGrid">
-                <!-- Products will be injected here via JavaScript -->
+    <div class="menu-overlay" data-menu-overlay hidden></div>
+    <aside class="mega-menu" id="scentMenu" role="dialog" aria-modal="true" aria-labelledby="scentMenuTitle" tabindex="-1" hidden>
+        <div class="mega-menu__inner">
+            <div class="mega-menu__header">
+                <h2 id="scentMenuTitle">Shop by scent universe</h2>
+                <button class="mega-menu__close" type="button" data-menu-close aria-label="Close menu">&times;</button>
+            </div>
+            <div class="mega-menu__grid">
+                <div class="mega-menu__column">
+                    <h3>Shop by scent family</h3>
+                    <ul>
+                        <li><a href="#collection">Aquatic</a></li>
+                        <li><a href="#collection">Citrus</a></li>
+                        <li><a href="#collection">Floral</a></li>
+                        <li><a href="#collection">Fruity</a></li>
+                        <li><a href="#collection">Gourmand</a></li>
+                        <li><a href="#collection">Green</a></li>
+                        <li><a href="#collection">Spice</a></li>
+                        <li><a href="#collection">Woody</a></li>
+                    </ul>
+                </div>
+                <div class="mega-menu__column">
+                    <h3>Shop bestselling fragrances</h3>
+                    <ul>
+                        <li><a href="#collection">Sunday Morning</a></li>
+                        <li><a href="#collection">Santorini Escape</a></li>
+                        <li><a href="#collection">Santal Bloom</a></li>
+                        <li><a href="#collection">Jardin de Figue</a></li>
+                        <li><a href="#collection">Noir Forest</a></li>
+                        <li><a href="#collection">Citrus Grove</a></li>
+                        <li><a href="#collection">Shoreline Bonfire</a></li>
+                        <li><a href="#collection">Rose Botanica</a></li>
+                    </ul>
+                </div>
+                <div class="mega-menu__feature">
+                    <article>
+                        <img src="https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&w=900&q=80" alt="Warm amber candle glowing next to spices">
+                        <div class="feature-copy">
+                            <p class="feature-kicker">Cozy times await</p>
+                            <h3>Shop spicy fragrances</h3>
+                        </div>
+                    </article>
+                    <article>
+                        <img src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80" alt="Minimalist white candle on wooden table">
+                        <div class="feature-copy">
+                            <p class="feature-kicker">Escape to nature</p>
+                            <h3>Shop woody fragrances</h3>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <main id="top">
+        <section class="hero section" aria-labelledby="hero-title">
+            <div class="hero-content">
+                <p class="hero-kicker">Hand Poured in Brooklyn</p>
+                <h1 id="hero-title">Botanical fragrances inspired by faraway places.</h1>
+                <p>Our slow-burning soy wax candles capture the mood of dreamy escapes and sun-drenched mornings. Thoughtfully crafted with clean ingredients and recyclable vessels.</p>
+                <div class="hero-actions">
+                    <a class="btn btn-primary" href="#collection">Shop the collection</a>
+                    <a class="btn btn-outline" href="#values">See how they’re made</a>
+                </div>
             </div>
         </section>
-        <!-- Shopping cart -->
-        <section id="cart">
-            <h2>Your Cart</h2>
-            <ul class="cart-items" id="cartItems"></ul>
-            <p class="cart-summary" id="cartSummary">Your cart is empty.</p>
-            <!-- Order form appears only when items are in cart -->
-            <form id="order-form">
-                <h3>Checkout</h3>
-                <label for="customerName">Full Name *</label>
-                <input type="text" id="customerName" required>
-                <label for="customerEmail">Email *</label>
-                <input type="email" id="customerEmail" required>
-                <label for="customerPhone">Phone</label>
-                <input type="tel" id="customerPhone">
-                <label for="customerAddress">Shipping Address *</label>
-                <textarea id="customerAddress" rows="3" required></textarea>
-                <label for="orderNotes">Order Notes</label>
-                <textarea id="orderNotes" rows="3"></textarea>
-                <button type="submit">Place Order</button>
-            </form>
+        <section class="filter-bar section" aria-label="Collection controls">
+            <div class="filter-meta">
+                <span>Celestial Collection</span>
+                <strong><span data-product-count>0</span> candles</strong>
+            </div>
+            <div class="filter-controls">
+                <label>
+                    <span class="sr-only">Sort by</span>
+                    <select aria-label="Sort products">
+                        <option>Sort: Featured</option>
+                        <option>Sort: Best Sellers</option>
+                        <option>Sort: Price (High to Low)</option>
+                        <option>Sort: Price (Low to High)</option>
+                    </select>
+                </label>
+                <label>
+                    <span class="sr-only">Filter by scent family</span>
+                    <select aria-label="Filter by scent family">
+                        <option>Scent: All</option>
+                        <option>Floral</option>
+                        <option>Woody</option>
+                        <option>Citrus</option>
+                        <option>Fresh</option>
+                    </select>
+                </label>
+            </div>
         </section>
-        <!-- Manage products (owner only) -->
-        <section id="manage-products">
-            <h2>Manage Products</h2>
-            <p>Use this form to add new candles to your catalogue or remove existing ones.  Changes are stored in your browser’s localStorage.</p>
-            <form id="addProductForm">
-                <input type="text" id="newName" placeholder="Name (e.g., Lavender Bliss)" required>
-                <input type="text" id="newPrice" placeholder="Price (e.g., 29.99)" required>
-                <input type="text" id="newImage" placeholder="Image URL (use your own product photo)" required>
-                <textarea id="newDescription" placeholder="Description / bullet points (separate with semicolons)" required></textarea>
-                <button type="submit">Add Product</button>
+        <section class="section collection" id="collection" aria-labelledby="collection-heading">
+            <div class="collection-header">
+                <h2 id="collection-heading">Signature Candles</h2>
+                <p>Each candle is composed with coconut-soy wax, lead-free cotton wicks, and perfume-grade oils for a clean, even burn. Travel to the Mediterranean, unwind in a lush garden, or find calm in the forest.</p>
+            </div>
+            <div class="product-grid">
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1481349518771-20055b2a7b24?auto=format&fit=crop&w=900&q=80" alt="Sunday Morning candle styled with freshly cut flowers and coffee" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Best Seller</span>
+                        <h3>Sunday Morning Candle</h3>
+                        <p class="product-notes">Notes of pear, jasmine, and soft sandalwood evoke the glow of golden-hour brunch.</p>
+                        <div class="product-meta">
+                            <span class="price">$42</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1519710164239-da123dc03ef4?auto=format&fit=crop&w=900&q=80" alt="Santorini Escape candle on a marble tray near citrus" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">New Arrival</span>
+                        <h3>Santorini Escape Candle</h3>
+                        <p class="product-notes">Citrus blossom, neroli, and driftwood capture the essence of sun-kissed islands.</p>
+                        <div class="product-meta">
+                            <span class="price">$44</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1505576399279-565b52d4ac77?auto=format&fit=crop&w=900&q=80" alt="Jardin de Figue candle with figs and greenery" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Limited Batch</span>
+                        <h3>Jardin de Figue Candle</h3>
+                        <p class="product-notes">Velvety fig, blackcurrant leaf, and vetiver for a dusk-in-Provence mood.</p>
+                        <div class="product-meta">
+                            <span class="price">$46</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1522139137660-151af2f0deb4?auto=format&fit=crop&w=900&q=80" alt="Santal Bloom candle paired with blossoming branches" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Editor’s Pick</span>
+                        <h3>Santal Bloom Candle</h3>
+                        <p class="product-notes">Creamy sandalwood, rose petals, and orris root create a modern floral warmth.</p>
+                        <div class="product-meta">
+                            <span class="price">$45</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1505575967455-40e256f73376?auto=format&fit=crop&w=900&q=80" alt="Noir Forest candle surrounded by botanical elements" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Night Collection</span>
+                        <h3>Noir Forest Candle</h3>
+                        <p class="product-notes">Smoked cedar, wet earth, and velvety moss for a grounded, nocturnal ritual.</p>
+                        <div class="product-meta">
+                            <span class="price">$48</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1486428260120-d2a63afff904?auto=format&fit=crop&w=900&q=80" alt="Citrus Grove candle with grapefruit and greenery" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Bright</span>
+                        <h3>Citrus Grove Candle</h3>
+                        <p class="product-notes">Grapefruit zest, yuzu, and verbena uplift mornings with sparkling energy.</p>
+                        <div class="product-meta">
+                            <span class="price">$40</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&w=900&q=80" alt="Shoreline Bonfire candle beside seashells" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Seasonal</span>
+                        <h3>Shoreline Bonfire Candle</h3>
+                        <p class="product-notes">Sea salt, smoky birch, and amber recall twilight gatherings on the coast.</p>
+                        <div class="product-meta">
+                            <span class="price">$43</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1505573027188-904b89d080af?auto=format&fit=crop&w=900&q=80" alt="Rose Botanica candle with fresh roses" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span class="product-tag">Cult Favorite</span>
+                        <h3>Rose Botanica Candle</h3>
+                        <p class="product-notes">Wild rose, pink pepper, and patchouli bloom into a romantic, modern bouquet.</p>
+                        <div class="product-meta">
+                            <span class="price">$44</span>
+                            <button class="quick-add" type="button">Quick Add</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+            <div class="collection-copy">
+                <div>
+                    <h3>Clean burn, generous throw.</h3>
+                    <p>We pour in small batches to guarantee consistent fragrance throw from the first light to the last flicker. Our coconut-soy blend delivers up to 60 hours of burn time per 13 oz vessel.</p>
+                </div>
+                <div>
+                    <h3>Crafted to be repurposed.</h3>
+                    <p>Every glass tumbler is designed for a second life. Once your candle is finished, rinse with warm water to transform it into a bud vase, pen cup, or cocktail tumbler.</p>
+                </div>
+            </div>
+        </section>
+        <section class="section brand-story" id="story">
+            <div class="story-copy">
+                <h2>From Brooklyn with love.</h2>
+                <p>Celestial Candle Studio was born in a sunlit loft overlooking the East River. We translate travel memories into olfactive stories using sustainable wax, phthalate-free oils, and vessels you will treasure long after the burn.</p>
+                <ul class="story-highlights">
+                    <li>Female-founded and independently owned since 2016.</li>
+                    <li>Small batch pouring ensures uncompromising quality and freshness.</li>
+                    <li>We donate 2% of every purchase to environmental restoration projects.</li>
+                </ul>
+            </div>
+            <div class="story-visual">
+                <img src="https://images.unsplash.com/photo-1464306076886-da185f06dcb6?auto=format&fit=crop&w=1000&q=80" alt="Candle maker hand-pouring wax into glass vessels">
+                <div class="story-badge">
+                    <span>Studio Notes</span>
+                    <strong>Batch No. 342</strong>
+                </div>
+            </div>
+        </section>
+        <section class="section values" id="values">
+            <h2>Sustainably minded from wick to delivery.</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <h3>Plant-based wax</h3>
+                    <p>Our custom coconut-soy blend is renewable, biodegradable, and delivers the cleanest burn we have ever tested.</p>
+                </div>
+                <div class="value-card">
+                    <h3>Non-toxic fragrance</h3>
+                    <p>Perfume-grade oils are free from phthalates, parabens, and animal byproducts—safe for you, better for the planet.</p>
+                </div>
+                <div class="value-card">
+                    <h3>Responsible packaging</h3>
+                    <p>Every order ships plastic-free in recyclable boxes with compostable peanuts and soy-based inks.</p>
+                </div>
+                <div class="value-card">
+                    <h3>Climate neutral</h3>
+                    <p>We measure, reduce, and offset 100% of our carbon footprint in collaboration with certified partners.</p>
+                </div>
+            </div>
+        </section>
+        <section class="section journal" id="journal">
+            <div class="journal-header">
+                <h2>From the Journal</h2>
+                <a class="btn btn-outline" href="#">Read all stories</a>
+            </div>
+            <div class="journal-grid">
+                <article class="journal-card">
+                    <img src="https://images.unsplash.com/photo-1501973801540-537f08ccae7b?auto=format&fit=crop&w=900&q=80" alt="Candles styled on a coffee table in a sunlit living room" loading="lazy">
+                    <div class="copy">
+                        <span>Home Rituals</span>
+                        <h3>Styling your coffee table with scent and light</h3>
+                        <p>Layer textures, botanicals, and ambient glow to set an inviting tone for gatherings big or small.</p>
+                    </div>
+                </article>
+                <article class="journal-card">
+                    <img src="https://images.unsplash.com/photo-1470246973918-29a93221c455?auto=format&fit=crop&w=900&q=80" alt="Traveler holding a candle tin in a coastal village" loading="lazy">
+                    <div class="copy">
+                        <span>Travel Diary</span>
+                        <h3>The Aegean palette behind Santorini Escape</h3>
+                        <p>From azure domes to sun-bleached stone, discover the color story that inspired our latest scent.</p>
+                    </div>
+                </article>
+                <article class="journal-card">
+                    <img src="https://images.unsplash.com/photo-1485637701894-09ad422f6de6?auto=format&fit=crop&w=900&q=80" alt="Hands preparing dried botanicals for candle making" loading="lazy">
+                    <div class="copy">
+                        <span>Inside the Studio</span>
+                        <h3>How we source botanicals for our blends</h3>
+                        <p>Meet the farmers and artisans helping us craft responsibly-sourced fragrances from around the globe.</p>
+                    </div>
+                </article>
+            </div>
+        </section>
+        <section class="section newsletter" id="newsletter">
+            <div>
+                <h2>Join the scent dispatch.</h2>
+                <p>Be first to know about limited batches, studio events, and playlists curated to match each release.</p>
+            </div>
+            <form>
+                <label class="sr-only" for="newsletter-email">Email address</label>
+                <input id="newsletter-email" type="email" name="email" placeholder="Enter your email" required>
+                <button type="submit">Sign up</button>
             </form>
-            <table id="productTable">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Price</th>
-                        <th>Description</th>
-                        <th>Image</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Product rows inserted here -->
-                </tbody>
-            </table>
         </section>
     </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Celestial Candle Studio</h3>
+                <p>Hand-poured in Brooklyn using clean ingredients and planet-friendly packaging. Crafted to transport you—wherever you are.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="#collection">Shop Candles</a></li>
+                    <li><a href="#story">Our Story</a></li>
+                    <li><a href="#values">Sustainability</a></li>
+                    <li><a href="#journal">Journal</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Shipping &amp; Returns</a></li>
+                    <li><a href="#">Wholesale</a></li>
+                    <li><a href="#">Gift Cards</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Follow</h4>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Pinterest</a></li>
+                    <li><a href="#">Spotify</a></li>
+                    <li><a href="#">TikTok</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; <span id="year"></span> Celestial Candle Studio. All rights reserved.</span>
+            <span>Crafted in Brooklyn, NY</span>
+        </div>
+    </footer>
     <script>
-        // Initial product data.  Each product includes an id, name, price,
-        // description (array of bullet points) and an image URL.  If
-        // localStorage already has a products array, it will override these.
-        const defaultProducts = [
-            {
-                id: 1,
-                name: "Lavender Bliss",
-                price: 29.99,
-                description: [
-                    "Soothing lavender fragrance with hints of chamomile",
-                    "Hand‑poured soy wax for a clean burn",
-                    "Cotton wick – lead and zinc free",
-                    "Burn time: ~45 hours"
-                ],
-                image: "https://via.placeholder.com/400x300?text=Lavender+Bliss"
-            },
-            {
-                id: 2,
-                name: "Citrus Sunrise",
-                price: 27.50,
-                description: [
-                    "Bright notes of orange blossom and bergamot",
-                    "Made with essential oils and natural soy",
-                    "Recyclable glass vessel",
-                    "Burn time: ~40 hours"
-                ],
-                image: "https://via.placeholder.com/400x300?text=Citrus+Sunrise"
-            },
-            {
-                id: 3,
-                name: "Woodland Retreat",
-                price: 34.00,
-                description: [
-                    "Earthy cedarwood, pine and a touch of sandalwood",
-                    "Infused with phthalate‑free fragrance oils",
-                    "Reusable jar with wooden lid",
-                    "Burn time: ~50 hours"
-                ],
-                image: "https://via.placeholder.com/400x300?text=Woodland+Retreat"
+        document.addEventListener('DOMContentLoaded', function () {
+            const productCountTarget = document.querySelector('[data-product-count]');
+            if (productCountTarget) {
+                const products = document.querySelectorAll('.product-card');
+                productCountTarget.textContent = products.length;
             }
-        ];
+            const year = document.getElementById('year');
+            if (year) {
+                year.textContent = new Date().getFullYear();
+            }
 
-        // Retrieve products from localStorage or fall back to default
-        function getProducts() {
-            const stored = localStorage.getItem('luxProducts');
-            return stored ? JSON.parse(stored) : defaultProducts;
-        }
-        function saveProducts(products) {
-            localStorage.setItem('luxProducts', JSON.stringify(products));
-        }
-        // Render the product cards in the catalogue section
-        function renderProducts() {
-            const products = getProducts();
-            const grid = document.getElementById('productGrid');
-            grid.innerHTML = '';
-            products.forEach(product => {
-                const card = document.createElement('div');
-                card.className = 'product';
-                card.innerHTML = `
-                    <img src="${product.image}" alt="${product.name}">
-                    <div class="product-content">
-                        <h3>${product.name}</h3>
-                        <span class="price">$${product.price.toFixed(2)}</span>
-                        <ul>
-                            ${product.description.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
-                        <button data-id="${product.id}">Add to Cart</button>
-                    </div>
-                `;
-                grid.appendChild(card);
+            const overlay = document.querySelector('[data-menu-overlay]');
+            const menuTriggers = document.querySelectorAll('[data-menu-open]');
+            const closeButtons = document.querySelectorAll('[data-menu-close]');
+            let activeMenu = null;
+            let activeTrigger = null;
+            let closeTimer = null;
+
+            const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+            function closeMenu() {
+                if (!activeMenu) {
+                    return;
+                }
+                if (closeTimer) {
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+                const menuToHide = activeMenu;
+                const triggerToRefocus = activeTrigger;
+                overlay?.classList.remove('is-active');
+                menuToHide.classList.remove('is-active');
+                document.body.classList.remove('menu-open');
+                triggerToRefocus?.setAttribute('aria-expanded', 'false');
+                activeMenu = null;
+                activeTrigger = null;
+                closeTimer = window.setTimeout(function () {
+                    menuToHide.setAttribute('hidden', '');
+                    if (!document.body.classList.contains('menu-open')) {
+                        overlay?.setAttribute('hidden', '');
+                    }
+                    triggerToRefocus?.focus();
+                    closeTimer = null;
+                }, 300);
+            }
+
+            function openMenu(trigger, menu) {
+                if (closeTimer) {
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+                if (activeMenu && activeMenu !== menu) {
+                    closeMenu();
+                }
+                if (menu.hasAttribute('hidden')) {
+                    menu.removeAttribute('hidden');
+                }
+                if (overlay?.hasAttribute('hidden')) {
+                    overlay.removeAttribute('hidden');
+                }
+                requestAnimationFrame(function () {
+                    overlay?.classList.add('is-active');
+                    menu.classList.add('is-active');
+                    document.body.classList.add('menu-open');
+                });
+                trigger.setAttribute('aria-expanded', 'true');
+                activeMenu = menu;
+                activeTrigger = trigger;
+                const focusTarget = menu.querySelector(focusableSelector);
+                if (focusTarget) {
+                    focusTarget.focus();
+                } else {
+                    menu.focus();
+                }
+            }
+
+            menuTriggers.forEach(function (trigger) {
+                trigger.addEventListener('click', function () {
+                    const targetId = trigger.getAttribute('data-menu-open');
+                    if (!targetId) {
+                        return;
+                    }
+                    const menu = document.getElementById(targetId);
+                    if (!menu || !overlay) {
+                        return;
+                    }
+                    if (menu === activeMenu) {
+                        closeMenu();
+                    } else {
+                        openMenu(trigger, menu);
+                    }
+                });
             });
-        }
-        // Shopping cart handling
-        let cart = [];
-        function addToCart(productId) {
-            const products = getProducts();
-            const product = products.find(p => p.id === productId);
-            if (!product) return;
-            // Check if product already in cart
-            const existing = cart.find(item => item.id === productId);
-            if (existing) {
-                existing.quantity += 1;
-            } else {
-                cart.push({ id: product.id, name: product.name, price: product.price, quantity: 1 });
-            }
-            renderCart();
-        }
-        function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
-            renderCart();
-        }
-        function renderCart() {
-            const list = document.getElementById('cartItems');
-            list.innerHTML = '';
-            let total = 0;
-            cart.forEach(item => {
-                total += item.price * item.quantity;
-                const li = document.createElement('li');
-                li.innerHTML = `
-                    <span>${item.name} × ${item.quantity}</span>
-                    <span>$${(item.price * item.quantity).toFixed(2)}</span>
-                    <button data-id="${item.id}">✕</button>
-                `;
-                list.appendChild(li);
+
+            overlay?.addEventListener('click', closeMenu);
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', closeMenu);
             });
-            const summary = document.getElementById('cartSummary');
-            if (cart.length === 0) {
-                summary.textContent = 'Your cart is empty.';
-                document.getElementById('order-form').style.display = 'none';
-            } else {
-                summary.textContent = `Subtotal: $${total.toFixed(2)}`;
-                document.getElementById('order-form').style.display = 'block';
-            }
-        }
-        // Handle product add button clicks
-        document.addEventListener('click', e => {
-            if (e.target.matches('.product button')) {
-                const id = parseInt(e.target.getAttribute('data-id'));
-                addToCart(id);
-            }
-            if (e.target.matches('.cart-items button')) {
-                const id = parseInt(e.target.getAttribute('data-id'));
-                removeFromCart(id);
-            }
-        });
-        // Order form submission
-        document.getElementById('order-form').addEventListener('submit', e => {
-            e.preventDefault();
-            // Collect order details
-            const orderDetails = {
-                name: document.getElementById('customerName').value,
-                email: document.getElementById('customerEmail').value,
-                phone: document.getElementById('customerPhone').value,
-                address: document.getElementById('customerAddress').value,
-                notes: document.getElementById('orderNotes').value,
-                items: cart
-            };
-            // For demonstration: show order confirmation
-            alert('Thank you for your order, ' + orderDetails.name + '!\n\nWe have received your purchase of ' + cart.length + ' item(s). You will receive a confirmation email shortly.');
-            // Clear cart
-            cart = [];
-            renderCart();
-            e.target.reset();
-        });
-        // Manage products: handle add new product
-        document.getElementById('addProductForm').addEventListener('submit', e => {
-            e.preventDefault();
-            const products = getProducts();
-            const newId = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
-            const name = document.getElementById('newName').value.trim();
-            const price = parseFloat(document.getElementById('newPrice').value);
-            const image = document.getElementById('newImage').value.trim();
-            const descInput = document.getElementById('newDescription').value.trim();
-            const description = descInput.split(';').map(s => s.trim()).filter(Boolean);
-            products.push({ id: newId, name, price, image, description });
-            saveProducts(products);
-            renderProducts();
-            renderProductTable();
-            e.target.reset();
-        });
-        // Render table for manage products
-        function renderProductTable() {
-            const products = getProducts();
-            const tbody = document.querySelector('#productTable tbody');
-            tbody.innerHTML = '';
-            products.forEach(product => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${product.name}</td>
-                    <td>$${product.price.toFixed(2)}</td>
-                    <td><ul>${product.description.map(item => `<li>${item}</li>`).join('')}</ul></td>
-                    <td><img src="${product.image}" alt="${product.name}" style="width:80px;height:60px;object-fit:cover;"></td>
-                    <td><button data-id="${product.id}">Remove</button></td>
-                `;
-                tbody.appendChild(tr);
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeMenu();
+                }
             });
-        }
-        // Handle remove product from table
-        document.getElementById('productTable').addEventListener('click', e => {
-            if (e.target.tagName === 'BUTTON') {
-                const id = parseInt(e.target.getAttribute('data-id'));
-                let products = getProducts();
-                products = products.filter(p => p.id !== id);
-                saveProducts(products);
-                renderProducts();
-                renderProductTable();
-            }
         });
-        // Initialize
-        renderProducts();
-        renderProductTable();
-        renderCart();
     </script>
 </body>
 </html>
