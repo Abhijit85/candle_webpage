@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruity Fragrance Family – Celestial Candle Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --background: #fff6f8;
+            --surface: #ffffff;
+            --text-primary: #271114;
+            --text-secondary: #8a5060;
+            --accent: #f47ba6;
+            --accent-dark: #d65a84;
+            --border: #ffd6e4;
+            --nav-height: 72px;
+        }
+        *, *::before, *::after { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Work Sans', 'Helvetica Neue', Arial, sans-serif;
+            color: var(--text-primary);
+            background: var(--background);
+            line-height: 1.65;
+            -webkit-font-smoothing: antialiased;
+        }
+        a { color: inherit; text-decoration: none; }
+        img { max-width: 100%; display: block; }
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0, 0, 0, 0);
+            white-space: nowrap; border: 0;
+        }
+        .announcement {
+            background: var(--text-primary);
+            color: var(--surface);
+            text-align: center;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            padding: 0.75rem 1rem;
+        }
+        header {
+            background: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+        }
+        nav {
+            max-width: 1200px;
+            margin: 0 auto;
+            height: var(--nav-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 24px;
+        }
+        .brand {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.08em;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .nav-link,
+        .nav-links a {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+        }
+        .nav-link {
+            background: none;
+            border: none;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0;
+        }
+        .menu-trigger::after {
+            content: '\25BE';
+            font-size: 0.55rem;
+            transform-origin: center;
+            transition: transform 0.2s ease;
+        }
+        body.menu-open .menu-trigger::after { transform: rotate(-180deg); }
+        .nav-link:hover,
+        .nav-link:focus,
+        .nav-links a:hover,
+        .nav-links a:focus { color: var(--accent-dark); }
+        .nav-cta {
+            border: 1px solid var(--text-primary);
+            padding: 0.5rem 1.2rem;
+            border-radius: 999px;
+            font-size: 0.85rem;
+            transition: background 0.2s ease, color 0.2s ease;
+        }
+        .nav-cta:hover,
+        .nav-cta:focus {
+            background: var(--text-primary);
+            color: var(--surface);
+        }
+        .menu-overlay[hidden],
+        .mega-menu[hidden] { display: none; }
+        .menu-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(229, 110, 152, 0.45);
+            backdrop-filter: blur(3px);
+            z-index: 30;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .menu-overlay.is-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .mega-menu {
+            position: fixed;
+            top: clamp(72px, 12vh, 120px);
+            left: 50%;
+            transform: translate(-50%, -12px);
+            max-width: min(1080px, calc(100% - 48px));
+            background: var(--surface);
+            border-radius: 28px;
+            box-shadow: 0 28px 80px rgba(18, 16, 13, 0.24);
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .mega-menu.is-active {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translate(-50%, 0);
+        }
+        .mega-menu__inner {
+            padding: 44px 48px 40px;
+            display: grid;
+            gap: 32px;
+        }
+        .mega-menu__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+        .mega-menu__header h2 {
+            margin: 0;
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.06em;
+        }
+        .mega-menu__close {
+            border: none;
+            background: rgba(0, 0, 0, 0.06);
+            color: var(--text-primary);
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            font-size: 1.4rem;
+            line-height: 1;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .mega-menu__close:hover,
+        .mega-menu__close:focus {
+            background: rgba(0, 0, 0, 0.12);
+            transform: rotate(90deg);
+        }
+        .mega-menu__grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 32px;
+        }
+        .mega-menu__column h3 {
+            margin: 0 0 1rem;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            color: var(--text-secondary);
+        }
+        .mega-menu__column ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.45rem;
+        }
+        .mega-menu__column a {
+            font-size: 0.95rem;
+            letter-spacing: 0.08em;
+            color: var(--text-primary);
+        }
+        .mega-menu__column a:hover,
+        .mega-menu__column a:focus { color: var(--accent-dark); }
+        .mega-menu__feature { display: grid; gap: 18px; }
+        .mega-menu__feature article {
+            border-radius: 20px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
+        }
+        .mega-menu__feature img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .feature-copy {
+            padding: 18px 22px 22px;
+            background: rgba(255, 246, 248, 0.92);
+        }
+        .feature-kicker {
+            margin: 0 0 0.35rem;
+            font-size: 0.75rem;
+            letter-spacing: 0.24em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+        .feature-copy h3 {
+            margin: 0;
+            font-size: 1.05rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        body.menu-open { overflow: hidden; }
+        body.menu-open main,
+        body.menu-open footer {
+            filter: blur(10px);
+            pointer-events: none;
+        }
+        main { padding: 0 24px 6rem; transition: filter 0.3s ease; }
+        .section { max-width: 1200px; margin: 0 auto; }
+        .collection-hero {
+            margin: 48px auto 32px;
+            border-radius: 28px;
+            overflow: hidden;
+            position: relative;
+            min-height: 420px;
+            display: grid;
+            align-items: center;
+            padding: 72px 64px;
+            color: var(--surface);
+        }
+        .collection-hero::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: url('https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=1400&q=80') center/cover;
+            transform: scale(1.05);
+            z-index: 0;
+        }
+        .collection-hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(120deg, rgba(212, 93, 132, 0.82) 22%, rgba(212, 93, 132, 0.5) 50%, rgba(212, 93, 132, 0.18));
+            z-index: 0;
+        }
+        .collection-hero__content {
+            position: relative;
+            z-index: 1;
+            max-width: 520px;
+            display: grid;
+            gap: 1.2rem;
+        }
+        .collection-hero__kicker {
+            text-transform: uppercase;
+            letter-spacing: 0.24em;
+            font-size: 0.78rem;
+        }
+        .collection-hero h1 {
+            margin: 0;
+            font-size: clamp(2.6rem, 5vw, 3.6rem);
+            font-family: 'Playfair Display', Georgia, serif;
+            line-height: 1.05;
+        }
+        .collection-hero p { margin: 0; font-size: 1.05rem; }
+        .collection-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            border-radius: 16px;
+            padding: 24px 32px;
+            border: 1px solid var(--border);
+        }
+        .collection-meta__group {
+            display: grid;
+            gap: 0.3rem;
+        }
+        .collection-meta__group span {
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.22em;
+            color: var(--text-secondary);
+        }
+        .collection-meta__group strong {
+            font-size: 1.2rem;
+        }
+        .collection-meta select {
+            border: 1px solid var(--border);
+            padding: 0.6rem 1rem;
+            border-radius: 999px;
+            font-size: 0.9rem;
+            background: var(--background);
+            color: var(--text-primary);
+        }
+        .collection-description {
+            margin: 48px 0 32px;
+            display: grid;
+            gap: 1rem;
+        }
+        .collection-description p {
+            color: var(--text-secondary);
+            max-width: 760px;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 28px;
+        }
+        .product-card {
+            background: var(--surface);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        .product-card figure { position: relative; overflow: hidden; aspect-ratio: 3 / 4; }
+        .product-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+        .product-card:hover img { transform: scale(1.05); }
+        .product-info {
+            padding: 22px 24px 26px;
+            display: grid;
+            gap: 0.75rem;
+        }
+        .product-info span {
+            font-size: 0.72rem;
+            letter-spacing: 0.22em;
+            text-transform: uppercase;
+            color: var(--accent);
+        }
+        .product-info h2 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .product-info p { margin: 0; color: var(--text-secondary); }
+        .product-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 0.5rem;
+        }
+        .price { font-weight: 600; letter-spacing: 0.12em; }
+        .quick-add {
+            border: none;
+            background: var(--text-primary);
+            color: var(--surface);
+            padding: 0.55rem 1.4rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .quick-add:hover,
+        .quick-add:focus {
+            transform: translateY(-2px);
+            background: var(--accent-dark);
+        }
+        .collection-highlights {
+            margin: 72px 0 32px;
+            background: var(--surface);
+            border-radius: 24px;
+            padding: 48px 56px;
+            border: 1px solid var(--border);
+            display: grid;
+            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        }
+        .collection-highlights h3 {
+            margin: 0 0 0.75rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .collection-highlights p { margin: 0; color: var(--text-secondary); }
+        .scent-palette {
+            display: grid;
+            gap: 24px;
+            margin: 72px 0;
+        }
+        .scent-palette__grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .scent-chip {
+            padding: 20px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border);
+        }
+        .scent-chip h4 {
+            margin: 0 0 0.5rem;
+            font-size: 1rem;
+        }
+        .scent-chip p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        .bundle-cta {
+            margin: 96px auto 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45), rgba(0, 0, 0, 0.05));
+            border-radius: 28px;
+            padding: 56px 64px;
+            display: grid;
+            gap: 1rem;
+            text-align: center;
+        }
+        .bundle-cta h2 {
+            margin: 0;
+            font-size: 2.1rem;
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .bundle-cta p {
+            margin: 0;
+            color: var(--text-secondary);
+        }
+        .bundle-cta a {
+            justify-self: center;
+            border: 1px solid var(--text-primary);
+            border-radius: 999px;
+            padding: 0.85rem 1.8rem;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            background: var(--text-primary);
+            color: var(--surface);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+        .bundle-cta a:hover,
+        .bundle-cta a:focus {
+            transform: translateY(-2px);
+            background: var(--accent-dark);
+        }
+        footer {
+            background: var(--surface);
+            padding: 72px 24px 40px;
+            border-top: 1px solid var(--border);
+            transition: filter 0.3s ease;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            gap: 48px;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        }
+        .footer-brand h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.7rem;
+            margin: 0 0 1rem;
+        }
+        .footer-links h4 {
+            text-transform: uppercase;
+            font-size: 0.78rem;
+            letter-spacing: 0.22em;
+            margin: 0 0 1rem;
+        }
+        .footer-links ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: grid;
+            gap: 0.6rem;
+        }
+        .footer-links a { color: var(--text-secondary); font-size: 0.95rem; }
+        .footer-bottom {
+            margin-top: 48px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            font-size: 0.82rem;
+            color: var(--text-secondary);
+        }
+        @media (max-width: 900px) {
+            nav {
+                flex-direction: column;
+                gap: 1rem;
+                height: auto;
+                padding: 16px 24px 24px;
+            }
+            .collection-hero { padding: 64px 36px; }
+            .collection-meta { padding: 24px; }
+            .collection-highlights { padding: 36px; }
+            .scent-palette__grid { grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+            .mega-menu { top: clamp(64px, 10vh, 96px); }
+            .mega-menu__inner { padding: 36px; }
+            .mega-menu__grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+        }
+        @media (max-width: 640px) {
+            main { padding: 0 18px 4rem; }
+            .announcement { font-size: 0.75rem; }
+            .collection-hero { margin: 32px auto; padding: 56px 24px; }
+            .collection-meta { gap: 1rem; }
+            .collection-highlights { padding: 28px; }
+            .bundle-cta { padding: 48px 28px; }
+            .mega-menu__inner { padding: 32px 24px; }
+            .mega-menu__header { flex-direction: column; align-items: flex-start; }
+            .mega-menu__close { align-self: flex-end; }
+        }
+    </style>
+</head>
+<body>
+    <div class="announcement">Complimentary carbon-neutral shipping on all candle bundles.</div>
+    <header>
+        <nav aria-label="Primary navigation">
+            <a class="brand" href="index.html">Celestial Candle Studio</a>
+            <div class="nav-links">
+                <button class="nav-link menu-trigger" type="button" aria-haspopup="dialog" aria-expanded="false" data-menu-open="scentMenu">Shop by Scent</button>
+                <a href="index.html#collection">Candles</a>
+                <a href="index.html#story">Our Story</a>
+                <a href="index.html#values">Sustainability</a>
+                <a href="index.html#journal">Journal</a>
+                <a class="nav-cta" href="index.html#newsletter">Gift Finder</a>
+            </div>
+        </nav>
+    </header>
+    <div class="menu-overlay" data-menu-overlay hidden></div>
+    <aside class="mega-menu" id="scentMenu" role="dialog" aria-modal="true" aria-labelledby="scentMenuTitle" tabindex="-1" hidden>
+        <div class="mega-menu__inner">
+            <div class="mega-menu__header">
+                <h2 id="scentMenuTitle">Shop by scent universe</h2>
+                <button class="mega-menu__close" type="button" data-menu-close aria-label="Close menu">&times;</button>
+            </div>
+            <div class="mega-menu__grid">
+                <div class="mega-menu__column">
+                    <h3>Shop by scent family</h3>
+                    <ul>
+                        <li><a href="collection-aquatic.html">Aquatic</a></li>
+                        <li><a href="collection-citrus.html">Citrus</a></li>
+                        <li><a href="collection-floral.html">Floral</a></li>
+                        <li><a href="collection-fruity.html">Fruity</a></li>
+                        <li><a href="collection-gourmand.html">Gourmand</a></li>
+                        <li><a href="collection-green.html">Green</a></li>
+                        <li><a href="collection-spice.html">Spice</a></li>
+                        <li><a href="collection-woody.html">Woody</a></li>
+                    </ul>
+                </div>
+                <div class="mega-menu__column">
+                    <h3>Shop bestselling fragrances</h3>
+                    <ul>
+                        <li><a href="collection-fruity.html#sangria">Sunset Sangria</a></li>
+                        <li><a href="collection-fruity.html#berryfield">Berry Field Day</a></li>
+                        <li><a href="collection-fruity.html#peachtea">Peach Tea Fizz</a></li>
+                        <li><a href="collection-fruity.html#figjam">Fig Jam Session</a></li>
+                        <li><a href="collection-fruity.html#cassis">Cassis Bloom</a></li>
+                        <li><a href="collection-fruity.html#papaya">Papaya Daydream</a></li>
+                    </ul>
+                </div>
+                <div class="mega-menu__feature">
+                    <article>
+                        <img src="https://images.unsplash.com/photo-1467173572719-f14b9fb86e5f?auto=format&fit=crop&w=900&q=80" alt="Candle surrounded by fresh berries">
+                        <div class="feature-copy">
+                            <p class="feature-kicker">Sweet & bright</p>
+                            <h3>Explore fruity favs</h3>
+                        </div>
+                    </article>
+                    <article>
+                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80" alt="Candle with fruit-filled brunch spread">
+                        <div class="feature-copy">
+                            <p class="feature-kicker">Brunch ready</p>
+                            <h3>Style an orchard table</h3>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <main>
+        <section class="collection-hero section" aria-labelledby="hero-title">
+            <div class="collection-hero__content">
+                <p class="collection-hero__kicker">Fruity fragrance family</p>
+                <h1 id="hero-title">Juicy infusions that feel like market mornings.</h1>
+                <p>Our fruit-forward candles pop with ripe berries, orchard stone fruit, and sparkling accords that brighten any gathering.</p>
+            </div>
+        </section>
+        <section class="collection-meta section" aria-label="Collection details">
+            <div class="collection-meta__group">
+                <span>Total fragrances</span>
+                <strong><span data-product-count>0</span> candles</strong>
+            </div>
+            <div class="collection-meta__group">
+                <span>Burn time</span>
+                <strong>58 hours · 13 oz vessels</strong>
+            </div>
+            <label>
+                <span class="sr-only">Sort fruity candles</span>
+                <select aria-label="Sort fruity candles">
+                    <option>Sort: Featured</option>
+                    <option>Sort: Newest</option>
+                    <option>Sort: Price (High to Low)</option>
+                    <option>Sort: Price (Low to High)</option>
+                </select>
+            </label>
+        </section>
+        <section class="collection-description section">
+            <p>Inspired by farmers' market hauls and long brunches, these blends pair lush fruit with cooling botanicals to stay refreshing from first burn to last.</p>
+            <p>We fortify each fragrance with cold-pressed oils and natural isolates so the sweetness stays balanced and never cloying.</p>
+        </section>
+        <section class="section" aria-label="Fruity candles">
+            <div class="product-grid">
+                <article class="product-card" id="sangria">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?auto=format&fit=crop&w=900&q=80" alt="Candle next to a pitcher of berry sangria" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span>Signature</span>
+                        <h2>Sunset Sangria</h2>
+                        <p>Stone fruit nectar, ruby berry, and sparkling wine enliven golden hours.</p>
+                        <div class="product-meta">
+                            <span class="price">$44</span>
+                            <button class="quick-add" type="button">Add to cart</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card" id="berryfield">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1484980972926-edee96e0960d?auto=format&fit=crop&w=900&q=80" alt="Candle with bowls of mixed berries" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span>Bestseller</span>
+                        <h2>Berry Field Day</h2>
+                        <p>Wild strawberry, raspberry leaf, and whipped cream feel like picnic blankets.</p>
+                        <div class="product-meta">
+                            <span class="price">$42</span>
+                            <button class="quick-add" type="button">Add to cart</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card" id="peachtea">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=900&q=80" alt="Candle with iced peach tea and fruit" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span>Limited batch</span>
+                        <h2>Peach Tea Fizz</h2>
+                        <p>Sun-kissed peach, jasmine tea, and ginger spritz refresh afternoon breaks.</p>
+                        <div class="product-meta">
+                            <span class="price">$43</span>
+                            <button class="quick-add" type="button">Add to cart</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card" id="figjam">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1505577058444-a3dab90d4253?auto=format&fit=crop&w=900&q=80" alt="Candle styled with figs and cheese board" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span>Cult classic</span>
+                        <h2>Fig Jam Session</h2>
+                        <p>Mission fig, blackcurrant, and amber sugar anchor cozy conversations.</p>
+                        <div class="product-meta">
+                            <span class="price">$46</span>
+                            <button class="quick-add" type="button">Add to cart</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card" id="cassis">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1514996937319-344454492b37?auto=format&fit=crop&w=900&q=80" alt="Candle with citrus and berries on marble" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span>Studio exclusive</span>
+                        <h2>Cassis Bloom</h2>
+                        <p>Blackcurrant bud, neroli, and soft musk strike a luscious balance.</p>
+                        <div class="product-meta">
+                            <span class="price">$45</span>
+                            <button class="quick-add" type="button">Add to cart</button>
+                        </div>
+                    </div>
+                </article>
+                <article class="product-card" id="papaya">
+                    <figure>
+                        <img src="https://images.unsplash.com/photo-1524592099565-3ff1eb892a90?auto=format&fit=crop&w=900&q=80" alt="Hands slicing tropical fruit near a candle" loading="lazy">
+                    </figure>
+                    <div class="product-info">
+                        <span>Island edit</span>
+                        <h2>Papaya Daydream</h2>
+                        <p>Juicy papaya, coconut water, and gardenia transport you to tropical rooftops.</p>
+                        <div class="product-meta">
+                            <span class="price">$47</span>
+                            <button class="quick-add" type="button">Add to cart</button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+        <section class="collection-highlights section">
+            <div>
+                <h3>Layered for dimension</h3>
+                <p>We balance tart fruits with creamy undertones and sparkling herbs so every burn reveals a new nuance.</p>
+            </div>
+            <div>
+                <h3>Mood boosting by design</h3>
+                <p>Tested to refresh open kitchens, brunch tables, and creative studios with a cheerful, lingering glow.</p>
+            </div>
+        </section>
+        <section class="scent-palette section" aria-label="Fruity scent notes">
+            <div>
+                <h2>Palette notes</h2>
+                <p>Every fruity blend starts bright and finishes velvety for a balanced, craveable scent journey.</p>
+            </div>
+            <div class="scent-palette__grid">
+                <div class="scent-chip">
+                    <h4>Top</h4>
+                    <p>Strawberry pulp, pink guava, passionfruit.</p>
+                </div>
+                <div class="scent-chip">
+                    <h4>Heart</h4>
+                    <p>Rosewater, hibiscus, peach nectar.</p>
+                </div>
+                <div class="scent-chip">
+                    <h4>Base</h4>
+                    <p>Vanilla bean, amber sugar, soft woods.</p>
+                </div>
+                <div class="scent-chip">
+                    <h4>Pair with</h4>
+                    <p>Chilled rosé, linen napkins, weekend playlists.</p>
+                </div>
+            </div>
+        </section>
+        <section class="bundle-cta section">
+            <h2>Mix your own fruit bowl trio.</h2>
+            <p>Bundle any three fruity blends and enjoy 10% off—ideal for brunch hosts and housewarming surprises.</p>
+            <a href="index.html#collection">Create a bundle</a>
+        </section>
+    </main>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>Celestial Candle Studio</h3>
+                <p>Hand-poured in Brooklyn using clean ingredients and planet-friendly packaging. Crafted to transport you—wherever you are.</p>
+            </div>
+            <div class="footer-links">
+                <h4>Explore</h4>
+                <ul>
+                    <li><a href="index.html#collection">Shop Candles</a></li>
+                    <li><a href="index.html#story">Our Story</a></li>
+                    <li><a href="index.html#values">Sustainability</a></li>
+                    <li><a href="index.html#journal">Journal</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="#">Shipping &amp; Returns</a></li>
+                    <li><a href="#">Wholesale</a></li>
+                    <li><a href="#">Gift Cards</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>Follow</h4>
+                <ul>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Pinterest</a></li>
+                    <li><a href="#">Spotify</a></li>
+                    <li><a href="#">TikTok</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; <span id="year"></span> Celestial Candle Studio. All rights reserved.</span>
+            <span>Crafted in Brooklyn, NY</span>
+        </div>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const productCountTarget = document.querySelector('[data-product-count]');
+            if (productCountTarget) {
+                const products = document.querySelectorAll('.product-card');
+                productCountTarget.textContent = products.length;
+            }
+            const year = document.getElementById('year');
+            if (year) {
+                year.textContent = new Date().getFullYear();
+            }
+            const overlay = document.querySelector('[data-menu-overlay]');
+            const menuTriggers = document.querySelectorAll('[data-menu-open]');
+            const closeButtons = document.querySelectorAll('[data-menu-close]');
+            let activeMenu = null;
+            let activeTrigger = null;
+            let closeTimer = null;
+            const focusableSelector = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+            function closeMenu() {
+                if (!activeMenu) {
+                    return;
+                }
+                if (closeTimer) {
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+                const menuToHide = activeMenu;
+                const triggerToRefocus = activeTrigger;
+                overlay?.classList.remove('is-active');
+                menuToHide.classList.remove('is-active');
+                document.body.classList.remove('menu-open');
+                triggerToRefocus?.setAttribute('aria-expanded', 'false');
+                activeMenu = null;
+                activeTrigger = null;
+                closeTimer = window.setTimeout(function () {
+                    menuToHide.setAttribute('hidden', '');
+                    if (!document.body.classList.contains('menu-open')) {
+                        overlay?.setAttribute('hidden', '');
+                    }
+                    triggerToRefocus?.focus();
+                    closeTimer = null;
+                }, 300);
+            }
+            function openMenu(trigger, menu) {
+                if (closeTimer) {
+                    clearTimeout(closeTimer);
+                    closeTimer = null;
+                }
+                if (activeMenu && activeMenu !== menu) {
+                    closeMenu();
+                }
+                if (menu.hasAttribute('hidden')) {
+                    menu.removeAttribute('hidden');
+                }
+                if (overlay?.hasAttribute('hidden')) {
+                    overlay.removeAttribute('hidden');
+                }
+                requestAnimationFrame(function () {
+                    overlay?.classList.add('is-active');
+                    menu.classList.add('is-active');
+                    document.body.classList.add('menu-open');
+                });
+                trigger.setAttribute('aria-expanded', 'true');
+                activeMenu = menu;
+                activeTrigger = trigger;
+                const focusTarget = menu.querySelector(focusableSelector);
+                if (focusTarget) {
+                    focusTarget.focus();
+                } else {
+                    menu.focus();
+                }
+            }
+            menuTriggers.forEach(function (trigger) {
+                trigger.addEventListener('click', function () {
+                    const targetId = trigger.getAttribute('data-menu-open');
+                    if (!targetId) {
+                        return;
+                    }
+                    const menu = document.getElementById(targetId);
+                    if (!menu || !overlay) {
+                        return;
+                    }
+                    if (menu === activeMenu) {
+                        closeMenu();
+                    } else {
+                        openMenu(trigger, menu);
+                    }
+                });
+            });
+            overlay?.addEventListener('click', closeMenu);
+            closeButtons.forEach(function (button) {
+                button.addEventListener('click', closeMenu);
+            });
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closeMenu();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
